@@ -1,4 +1,5 @@
-const { ethers } = require("ethers");
+const { ethers } = require( "ethers" );
+const config = require( "./config.js" )
 
 main()
 
@@ -19,7 +20,7 @@ async function getBalance() {
     console.log( 'getBalance' )
 
     console.log( 'creating provider' )
-    var provider = new ethers.providers.JsonRpcProvider( 'https://evm-t3.cronos.org:8545' )
+    var provider = new ethers.providers.JsonRpcProvider( config.provider )
 
     console.log( 'getting block number' )
     var blockNumber = await provider.getBlockNumber()
