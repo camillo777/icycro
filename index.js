@@ -14,7 +14,7 @@ async function main() {
 }
 
 async function getBalance() {
-    var provider = new ethers.providers.JsonRpcProvider( 'https://evm-t3.cronos.org/:8545' )
+    var provider = new ethers.providers.JsonRpcProvider( 'https://evm-t3.cronos.org:8545' )
 
     await provider.getBlockNumber()
     // 14467379
