@@ -4,6 +4,16 @@ main()
 
 async function main() {
 
+    try {
+    await getBalance();
+    }
+    catch( e ) {
+        console.error( e )
+    }
+
+}
+
+async function getBalance() {
     var provider = new ethers.providers.JsonRpcProvider( 'https://evm-t3.cronos.org/:8545' )
 
     await provider.getBlockNumber()
@@ -21,5 +31,4 @@ async function main() {
     // If a user enters a string in an input field, you may need
     // to convert it from ether (as a string) to wei (as a BigNumber)
     ethers.utils.parseEther("1.0")
-
 }
