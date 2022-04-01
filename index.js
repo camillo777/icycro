@@ -19,7 +19,7 @@ async function main() {
 async function getBalance() {
     console.log( 'getBalance' )
 
-    console.log( 'creating provider' )
+    console.log( `creating provider: ${ config.provider }` )
     var provider = new ethers.providers.JsonRpcProvider( config.provider )
 
     console.log( 'getting block number' )
