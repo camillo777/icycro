@@ -28,7 +28,7 @@ async function getBalance() {
 
     console.log( 'getting balance' )
     // Get the balance of an account (by address or ENS name, if supported by network)
-    balance = await provider.getBalance("ethers.eth")
+    var balance = await provider.getBalance("ethers.eth")
     // { BigNumber: "82826475815887608" }
 
     // Often you need to format the output to something more user-friendly,
