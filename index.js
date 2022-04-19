@@ -14,7 +14,13 @@ async function main() {
         //mail.send( 'title', 'body' )
         //return
 
-        await getBalance();
+        while( true ) {
+
+            await getBalance();
+
+            await sleepms( 10 * 1000 * 60 )
+
+        }
     }
     catch( e ) {
         console.error( e )
@@ -138,4 +144,9 @@ async function getBalance() {
     // '0.082826475815887608'
     console.log( 'fPrice', fPrice )
 */
+}
+
+
+function sleepms(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
