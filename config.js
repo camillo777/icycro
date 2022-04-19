@@ -71,4 +71,13 @@ config.tokenABI = [
     }
   ]
 
+
+config.mail = {}
+config.mail.sendmail = false
+config.mail.host = 'smtp.sendgrid.net'
+config.mail.port = 25
+config.mail.username = 'apikey'
+config.mail.from = 'camillo777@gmail.com'
+config.mail.to = 'camillo777@gmail.com'
+
 module.exports = config;

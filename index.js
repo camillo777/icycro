@@ -1,5 +1,8 @@
 const { ethers } = require( "ethers" );
 const config = require( "./config.js" )
+const Mail = require( "./mail.js" )
+
+var mail
 
 main()
 
@@ -7,6 +10,10 @@ async function main() {
 
     console.log( 'START' )
     try {
+        mail = new Mail()
+        //mail.send( 'title', 'body' )
+        //return
+
         await getBalance();
     }
     catch( e ) {
@@ -82,10 +89,39 @@ async function getBalance() {
 
     const reserves = await icycro.getReserves();
     const reserve0 = reserves.reserve0
-    console.log( `Reserve0: ${ reserve0 }`)
+    var adjustedReserve0 = reserve0 / Math.pow( 10, decimal0 )
+    console.log( `Reserve0: ${ reserve0 } ${ adjustedReserve0 }`)
     const reserve1 = reserves.reserve1
-    console.log( `Reserve1: ${ reserve1 }`)
-    console.log( 'Price', reserve0 / reserve1, reserve1 / reserve0 )
+    var adjustedReserve1 = reserve1 / Math.pow( 10, decimal1 )
+    console.log( `Reserve1: ${ reserve1 } ${ adjustedReserve1 }`)
+    //console.log( 'Price', reserve0 / reserve1, reserve1 / reserve0 )
+
+    const changeIcyCro = reserve0 / reserve1
+    const changeCroIcy = reserve1 / reserve0
+    
+    console.log( `Price: CRO/ICY ${ changeCroIcy }   ICY/CRO ${ changeIcyCro }` )
+
+    if ( changeCroIcy < 6.9 || changeCroIcy > 7.3 ) {
+        mail.send(
+            'icy cro',
+            `Price: CRO/ICY ${ changeCroIcy }   ICY/CRO ${ changeIcyCro }`
+        )
+    }
+/*
+    // ADD 20000 ICY
+    const icy = ethers.utils.parseUnits("1.0", "ether")
+    const cro = icy.mul ( change )
+    console.log( `ICY NEW: ${ icy }`)
+    console.log( `CRO NEW: ${ cro }`)
+    const reserve0n = reserve0.sub( cro )
+    const reserve1n = reserve1.add( icy )
+    console.log( `Reserve0 NEW: ${ reserve0n }`)
+    console.log( `Reserve1 NEW: ${ reserve1n }`)
+    console.log( 'Price NEW', 
+        reserve0n / reserve1n, 
+        reserve1n / reserve0n 
+    )
+*/
 /*
     //console.log( reserves )
     console.log( parseInt( ethers.utils.formatUnits( reserve0, 'ether' ) ) )
