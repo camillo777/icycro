@@ -1,6 +1,8 @@
 const { ethers } = require( "ethers" );
 const config = require( "./config.js" )
 const Mail = require( "./mail.js" )
+const log = require('fancy-log');
+//log.warn("unreasonably simple");
 
 var mail
 
@@ -8,7 +10,7 @@ main()
 
 async function main() {
 
-    console.log( 'START' )
+    log( 'START' )
     try {
         mail = new Mail()
         //mail.send( 'title', 'body' )
@@ -18,29 +20,30 @@ async function main() {
 
             await getBalance();
 
-            await sleepms( 10 * 1000 * 60 )
+            log.warn( 'Wait 15 minutes...' )
+            await sleepms( 15 * 1000 * 60 )
 
         }
     }
     catch( e ) {
-        console.error( e )
+        log.error( e )
     }
-    console.log( 'END' )
+    log( 'END' )
 
 }
 
 async function getBalance() {
-    console.log( 'getBalance' )
+    log( 'getBalance' )
 
-    console.log( `creating provider: ${ config.provider }` )
+    log( `creating provider: ${ config.provider }` )
     var provider = new ethers.providers.JsonRpcProvider( config.provider )
 
-    console.log( 'getting block number' )
+    log( 'getting block number' )
     var blockNumber = await provider.getBlockNumber()
     // 14467379
-    console.log( 'blockNumber', blockNumber )
+    log( 'blockNumber', blockNumber )
 
-    console.log( 'getting balance' )
+    log( 'getting balance' )
     // Get the balance of an account (by address or ENS name, if supported by network)
     var balance = await provider.getBalance( config.icycroAddress )
     // { BigNumber: "82826475815887608" }
@@ -49,7 +52,7 @@ async function getBalance() {
     // such as in ether (instead of wei)
     var fBalance = ethers.utils.formatEther(balance)
     // '0.082826475815887608'
-    console.log( 'fBalance', fBalance )
+    log( 'fBalance', fBalance )
 
     // If a user enters a string in an input field, you may need
     // to convert it from ether (as a string) to wei (as a BigNumber)
@@ -63,9 +66,9 @@ async function getBalance() {
     );
     
     const token0Address = await icycro.token0();
-    console.log( `Token0: ${ token0Address }`)
+    log( `Token0: ${ token0Address }`)
     const token1Address = await icycro.token1();
-    console.log( `Token1: ${ token1Address }`)
+    log( `Token1: ${ token1Address }`)
 
     const token0 = new ethers.Contract(
         token0Address, 
@@ -90,26 +93,32 @@ async function getBalance() {
     var tokenName1 = await token1.name()
     var tokenSymbol1 = await token1.symbol()
 
-    console.log( `TOKEN0: ${ adjustedBalance0 } ${ tokenSymbol0 } ( ${ tokenName0 } )` )
-    console.log( `TOKEN1: ${ adjustedBalance1 } ${ tokenSymbol1 } ( ${ tokenName1 } )` )
+    log( `TOKEN0: ${ adjustedBalance0 } ${ tokenSymbol0 } ( ${ tokenName0 } )` )
+    log( `TOKEN1: ${ adjustedBalance1 } ${ tokenSymbol1 } ( ${ tokenName1 } )` )
 
     const reserves = await icycro.getReserves();
     const reserve0 = reserves.reserve0
     var adjustedReserve0 = reserve0 / Math.pow( 10, decimal0 )
-    console.log( `Reserve0: ${ reserve0 } ${ adjustedReserve0 }`)
+    log( `Reserve0: ${ reserve0 } ${ adjustedReserve0 }`) // CRO
     const reserve1 = reserves.reserve1
     var adjustedReserve1 = reserve1 / Math.pow( 10, decimal1 )
-    console.log( `Reserve1: ${ reserve1 } ${ adjustedReserve1 }`)
+    log( `Reserve1: ${ reserve1 } ${ adjustedReserve1 }`) // ICY
     //console.log( 'Price', reserve0 / reserve1, reserve1 / reserve0 )
 
     const changeIcyCro = reserve0 / reserve1
     const changeCroIcy = reserve1 / reserve0
     
-    console.log( `Price: CRO/ICY ${ changeCroIcy }   ICY/CRO ${ changeIcyCro }` )
+    log( `Price:   CRO/ICY ${ changeCroIcy }   ICY/CRO ${ changeIcyCro }` )
+/*
+    var cro = 3000
+    var icy = cro * changeCroIcy
+    log( `CRO: ${ cro } ICY: ${ icy }`)
 
+    log( `NEW Price:   CRO/ICY ${ (adjustedReserve1-icy)/(adjustedReserve0+cro) }   ICY/CRO ${ (adjustedReserve0+cro)/(adjustedReserve1-icy) }` )
+*/
     if ( changeCroIcy < 6.9 || changeCroIcy > 7.3 ) {
         mail.send(
-            'icy cro',
+            `CRO/ICY ${ changeCroIcy }`,
             `Price: CRO/ICY ${ changeCroIcy }   ICY/CRO ${ changeIcyCro }`
         )
     }
