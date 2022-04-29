@@ -73,7 +73,7 @@ config.tokenABI = [
 
 
 config.mail = {}
-config.mail.sendmail = truee
+config.mail.sendmail = true
 config.mail.host = 'smtp.sendgrid.net'
 config.mail.port = 25
 config.mail.username = 'apikey'
