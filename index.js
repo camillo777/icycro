@@ -5,6 +5,7 @@ const log = require('fancy-log');
 //log.warn("unreasonably simple");
 
 var mail
+var changeCroIcyOld = 0
 
 main()
 
@@ -109,6 +110,7 @@ async function getBalance() {
     const changeCroIcy = reserve1 / reserve0
     
     log( `Price:   CRO/ICY ${ changeCroIcy }   ICY/CRO ${ changeIcyCro }` )
+
 /*
     var cro = 3000
     var icy = cro * changeCroIcy
@@ -116,11 +118,29 @@ async function getBalance() {
 
     log( `NEW Price:   CRO/ICY ${ (adjustedReserve1-icy)/(adjustedReserve0+cro) }   ICY/CRO ${ (adjustedReserve0+cro)/(adjustedReserve1-icy) }` )
 */
+
     if ( changeCroIcy < 6.9 || changeCroIcy > 7.3 ) {
-        mail.send(
-            `CRO/ICY ${ changeCroIcy }`,
-            `Price: CRO/ICY ${ changeCroIcy }   ICY/CRO ${ changeIcyCro }`
-        )
+
+        log( `Price is in range: ${changeCroIcy}` )
+
+        if ( changeCroIcyOld != changeCroIcy ) {
+
+            log( `Price is different ${changeCroIcy} from ${changeCroIcyOld}` )
+
+            changeCroIcyOld = changeCroIcy
+
+            mail.send(
+                `CRO/ICY ${ changeCroIcy }`,
+                `Price: CRO/ICY ${ changeCroIcy }   ICY/CRO ${ changeIcyCro }`
+            )
+
+        }
+        else {
+            log( `Price is equal: ${changeCroIcy} = ${changeCroIcyOld}` )
+        }
+    }
+    else {
+        log( `Price is NOT in range: ${changeCroIcy}` )
     }
 /*
     // ADD 20000 ICY
